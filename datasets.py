@@ -107,3 +107,43 @@ def build_transform(is_train, args):
     t.append(transforms.ToTensor())
     t.append(transforms.Normalize(IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD))
     return transforms.Compose(t)
+
+
+class CIFAR10Dataset:
+    def __init__(self, root, train=True, transform=None):
+        self.root = root
+        self.train = train
+        self.transform = transform
+        self.dataset = datasets.CIFAR10(root=self.root, train=self.train, download=True, transform=self.transform)
+
+    def __getitem__(self, index):
+        return self.dataset[index]
+
+    def __len__(self):
+        return len(self.dataset)
+
+def build_cifar10_dataset(is_train, args):
+    # Define the transform with resizing to 224x224
+    if is_train:
+        transform = transforms.Compose([
+            transforms.Resize(224),  # Resize to 224x224
+            transforms.RandomCrop(32, padding=4),
+            transforms.Resize(224),  # Resize again to ensure the final size is 224x224 after cropping
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+        ])
+    else:
+        transform = transforms.Compose([
+            transforms.Resize(224),  # Resize to 224x224 for validation/testing
+            transforms.ToTensor(),
+            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+        ])
+
+    # Create the CIFAR-10 dataset
+    dataset = CIFAR10Dataset(root=args.data_path, train=is_train, transform=transform)
+
+    # CIFAR-10 has a fixed number of classes
+    nb_classes = 10
+
+    return dataset, nb_classes

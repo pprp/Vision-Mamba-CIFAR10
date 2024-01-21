@@ -17,7 +17,7 @@ from timm.scheduler import create_scheduler
 from timm.optim import create_optimizer
 from timm.utils import NativeScaler, get_state_dict, ModelEma
 
-from datasets import build_dataset
+from datasets import build_dataset, build_cifar10_dataset
 from engine import train_one_epoch, evaluate
 from losses import DistillationLoss
 from samplers import RASampler
@@ -39,6 +39,7 @@ def get_args_parser():
     parser.add_argument('--epochs', default=300, type=int)
     parser.add_argument('--bce-loss', action='store_true')
     parser.add_argument('--unscale-lr', action='store_true')
+    parser.add_argument('--gpu', default=0, type=int)
 
     # Model parameters
     parser.add_argument('--model', default='deit_base_patch16_224', type=str, metavar='MODEL',
@@ -224,8 +225,10 @@ def main(args):
         for key, value in vars(args).items():
             mlflow.log_param(key, value)
 
-    dataset_train, args.nb_classes = build_dataset(is_train=True, args=args)
-    dataset_val, _ = build_dataset(is_train=False, args=args)
+    # dataset_train, args.nb_classes = build_dataset(is_train=True, args=args)
+    dataset_train, args.nb_classes = build_cifar10_dataset(is_train=True, args=args)
+    # dataset_val, _ = build_dataset(is_train=False, args=args)
+    dataset_val, _ = build_cifar10_dataset(is_train=False, args=args)
 
     if args.distributed:
         num_tasks = utils.get_world_size()
