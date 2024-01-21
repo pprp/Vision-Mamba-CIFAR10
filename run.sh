@@ -1,6 +1,6 @@
 #!/bin/bash 
 
 CUDA_VISIBLE_DEVICES=6 python main.py --data-set CIFAR \
-    --model vim_tiny_patch16_224 --data-path ./data \
-    --epochs 200 --lr 0.1 \
-    --batch-size 128 --gpu 6
+    --model vim_tiny_patch16_224_bimambav2_final_pool_mean_abs_pos_embed_rope_also_residual --data-path ./data \
+    --epochs 200 --lr 5e-3 \
+    --batch-size 640 --gpu 6

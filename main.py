@@ -7,9 +7,12 @@ import time
 import torch
 import torch.backends.cudnn as cudnn
 import json
+import models_mamba
+
 
 from pathlib import Path
 
+import timm 
 from timm.data import Mixup
 from timm.models import create_model
 from timm.loss import LabelSmoothingCrossEntropy, SoftTargetCrossEntropy
@@ -31,6 +34,7 @@ import utils
 
 # log about
 import mlflow
+print(timm.list_models(pretrained=True))
 
 
 def get_args_parser():
